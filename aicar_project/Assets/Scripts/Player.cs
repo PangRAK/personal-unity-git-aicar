@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
     public SpriteRenderer sprite;
 
     // 거리 센서
-
+    //test
 
     // Start is called before the first frame update
     void Start()
