@@ -16,6 +16,10 @@ public class Player : MonoBehaviour
     public Vector2 speed_vec;
     public Vector3 originPos;
     public SpriteRenderer sprite;
+    public RaycastHit2D hit1;
+    public RaycastHit2D hit2;
+    public RaycastHit2D hit3;
+    public RaycastHit2D hit4;
 
     // 거리 센서
     //test
@@ -25,12 +29,13 @@ public class Player : MonoBehaviour
     {
         originPos = transform.position;
         sprite = gameObject.GetComponent<SpriteRenderer>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        Move();
+        AutoMove();
         CheckWall();
     }
 
@@ -111,30 +116,68 @@ public class Player : MonoBehaviour
 
     void CheckWall()
     {
-        UnityEngine.Debug.DrawRay(transform.position, transform.TransformDirection(Vector2.up) * 5.0f, Color.red, LayerMask.GetMask("Wall"));
-        //UnityEngine.Debug.DrawRay(transform.position, transform.up * 5.0f, Color.red, LayerMask.GetMask("Wall"));
-        //UnityEngine.Debug.DrawRay(transform.position, Vector2.up * 2.0f, Color.red, LayerMask.NameToLayer("Wall"));
+        // 센서 범위를 그려줌
+        UnityEngine.Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(-0.2f, 1)) * 10.0f, Color.red);
+        UnityEngine.Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(0.2f, 1)) * 10.0f, Color.red);
+        UnityEngine.Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(-1, 1)) * 2.5f, Color.red);
+        UnityEngine.Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(1,1)) * 2.5f, Color.red);
+        
+        // 센서를 생성
+        hit1 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(-0.2f, 1)), 10.0f, LayerMask.GetMask("Wall"));
+        hit2 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(0.2f, 1)), 10.0f, LayerMask.GetMask("Wall"));
+        hit3 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(-1, 1)), 3.5f, LayerMask.GetMask("Wall"));
+        hit4 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(1, 1)), 3.5f, LayerMask.GetMask("Wall"));
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.up), 5.0f, LayerMask.GetMask("Wall"));
-        //RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, 5.0f, LayerMask.GetMask("Wall"));
 
-        //if(hit.collider != null)
-        //{
-        //    UnityEngine.Debug.Log(hit.collider.name);
-        //}
-
-        //if (Physics2D.Raycast(transform.position, Vector2.zero))
-        if (hit.collider != null)
+        if (hit1.collider != null)
         {
-            UnityEngine.Debug.Log(hit.collider.gameObject.layer);
-            if (hit.collider.gameObject.layer == 6)
-            {
-                UnityEngine.Debug.Log("Wall");
-                return;
-            }
-            else
-                UnityEngine.Debug.Log("!Wall");
+            if (hit1.collider.gameObject.layer == 6)
+                UnityEngine.Debug.Log("hit1 = " + hit1.distance);
         }
+        if (hit2.collider != null)
+        {
+            if (hit2.collider.gameObject.layer == 6)
+                UnityEngine.Debug.Log("hit2 = " + hit2.distance);
+        }
+        if (hit3.collider != null)
+        {
+            if (hit3.collider.gameObject.layer == 6)
+                UnityEngine.Debug.Log("hit3 = " + hit3.distance);
+        }
+        if (hit4.collider != null)
+        {
+            if (hit4.collider.gameObject.layer == 6)
+                UnityEngine.Debug.Log("hit4 = " + hit4.distance);
+        }
+
+        
+    }
+
+    void AutoMove()
+    {
+        int random = UnityEngine.Random.Range(0, 10);
+
+        speed_vec.y = 0.03f;
+        transform.Translate(speed_vec);
+
+        if (hit3.distance - hit4.distance < 0)
+        {
+            Left();
+        }
+        else
+        {
+            Right();
+        }
+    }
+
+    void Left()
+    {
+        transform.Rotate(0, 0, Time.deltaTime * 200, Space.Self);
+    }
+
+    void Right()
+    {
+        transform.Rotate(0, 0, -Time.deltaTime * 200, Space.Self);
     }
 
     private void OnCollisionEnter2D(Collision2D collision) // 두 물체간 물리적 충돌을 체크하고 싶다.
@@ -142,8 +185,6 @@ public class Player : MonoBehaviour
         if (collision.gameObject.tag == "Wall")
         {
             move_method = -1;
-            //Debug.Log("플레이어가 벽에 부딪혔습니다.");
-            //Debug.Log(collision.contacts[0].point);
         }
     }
 }
