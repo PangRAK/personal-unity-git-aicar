@@ -1025,7 +1025,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   move_method: 0
-  speed: 0.08
+  speed: 0.2
   speed_vec: {x: 0, y: 0}
   originPos: {x: 0, y: 0, z: 0}
   sprite: {fileID: 0}

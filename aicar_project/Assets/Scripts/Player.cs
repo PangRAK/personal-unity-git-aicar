@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading;
 using UnityEngine;
+using RAK_AI;
 
 public class Player : MonoBehaviour
 {
@@ -16,14 +17,15 @@ public class Player : MonoBehaviour
     public Vector2 speed_vec;
     public Vector3 originPos;
     public SpriteRenderer sprite;
+
+    // 거리 센서
     public RaycastHit2D hit1;
     public RaycastHit2D hit2;
     public RaycastHit2D hit3;
     public RaycastHit2D hit4;
+    public RaycastHit2D hit5;
 
-    // 거리 센서
-    //test
-
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -117,17 +119,18 @@ public class Player : MonoBehaviour
     void CheckWall()
     {
         // 센서 범위를 그려줌
+        UnityEngine.Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(0, 1)) * 20.0f, Color.red);
         UnityEngine.Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(-0.2f, 1)) * 10.0f, Color.red);
         UnityEngine.Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(0.2f, 1)) * 10.0f, Color.red);
         UnityEngine.Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(-1, 1)) * 2.5f, Color.red);
         UnityEngine.Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(1,1)) * 2.5f, Color.red);
-        
-        // 센서를 생성
-        hit1 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(-0.2f, 1)), 10.0f, LayerMask.GetMask("Wall"));
-        hit2 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(0.2f, 1)), 10.0f, LayerMask.GetMask("Wall"));
-        hit3 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(-1, 1)), 3.5f, LayerMask.GetMask("Wall"));
-        hit4 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(1, 1)), 3.5f, LayerMask.GetMask("Wall"));
 
+        // 센서를 생성
+        hit1 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(0, 1)), 20.0f, LayerMask.GetMask("Wall"));
+        hit2 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(-0.2f, 1)), 10.0f, LayerMask.GetMask("Wall"));
+        hit3 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(0.2f, 1)), 10.0f, LayerMask.GetMask("Wall"));
+        hit4 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(-1, 1)), 3.5f, LayerMask.GetMask("Wall"));
+        hit5 = Physics2D.Raycast(transform.position, transform.TransformDirection(new Vector2(1, 1)), 3.5f, LayerMask.GetMask("Wall"));
 
         if (hit1.collider != null)
         {
@@ -149,17 +152,17 @@ public class Player : MonoBehaviour
             if (hit4.collider.gameObject.layer == 6)
                 UnityEngine.Debug.Log("hit4 = " + hit4.distance);
         }
+        if (hit5.collider != null)
+        {
+            if (hit5.collider.gameObject.layer == 6)
+                UnityEngine.Debug.Log("hit5 = " + hit5.distance);
+        }
 
-        
     }
 
     void AutoMove()
     {
-        int random = UnityEngine.Random.Range(0, 10);
-
-        speed_vec.y = speed;
-        transform.Translate(speed_vec);
-
+        
         if (hit1.distance == 0)
             hit1.distance = 9999f;
         if (hit2.distance == 0)
@@ -168,12 +171,20 @@ public class Player : MonoBehaviour
             hit3.distance = 9999f;
         if (hit4.distance == 0)
             hit4.distance = 9999f;
+        if (hit5.distance == 0)
+            hit5.distance = 9999f;
 
-        if (hit3.distance > hit4.distance)
+        int random = UnityEngine.Random.Range(0, 10);
+
+        speed_vec.y = speed;
+        transform.Translate(speed_vec);
+
+
+        if (hit4.distance > hit5.distance)
         {
             Left();
         }
-        else if(hit3.distance < hit4.distance)
+        else if(hit4.distance < hit5.distance)
         {
             Right();
         }
