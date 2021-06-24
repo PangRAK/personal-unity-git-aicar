@@ -157,14 +157,23 @@ public class Player : MonoBehaviour
     {
         int random = UnityEngine.Random.Range(0, 10);
 
-        speed_vec.y = 0.03f;
+        speed_vec.y = speed;
         transform.Translate(speed_vec);
 
-        if (hit3.distance - hit4.distance < 0)
+        if (hit1.distance == 0)
+            hit1.distance = 9999f;
+        if (hit2.distance == 0)
+            hit2.distance = 9999f;
+        if (hit3.distance == 0)
+            hit3.distance = 9999f;
+        if (hit4.distance == 0)
+            hit4.distance = 9999f;
+
+        if (hit3.distance > hit4.distance)
         {
             Left();
         }
-        else
+        else if(hit3.distance < hit4.distance)
         {
             Right();
         }
