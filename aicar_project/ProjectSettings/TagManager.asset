@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Wall
-  - Bullet
+  - CheckPoint
   layers:
   - Default
   - TransparentFX
@@ -16,15 +16,15 @@ TagManager:
   - Wall
   - Player
   - PlayerDamaged
-  - Bullet
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - CheckPoint1
+  - CheckPoint2
+  - CheckPoint3
+  - CheckPoint4
+  - CheckPoint5
+  - CheckPoint6
+  - CheckPoint7
+  - CheckPoint8
+  - CheckPoint9
   - 
   - 
   - 
