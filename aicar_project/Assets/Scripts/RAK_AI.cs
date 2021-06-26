@@ -8,7 +8,8 @@ namespace RAK_AI
 {
     class Rak_Ai
     {
-        
+        static System.Random rand = new System.Random();   // 난수 생성용
+
         static public float sigmoid(float z)
         {
             return Convert.ToSingle(1 / (1 + Math.Exp(z * -2f)));   // 이 부분 나중엔 2를 빼는 거도 고려해보자. 데이터 증폭용
@@ -25,6 +26,118 @@ namespace RAK_AI
             sum_exp_z = exp_z[0] + exp_z[1];
 
             return new float[] { exp_z[0] / sum_exp_z, exp_z[1] / sum_exp_z };
+        }
+
+        static public int[] rankingSelection()
+        {
+            //30    0.0 ~ 0.3
+            //20    0.3 ~ 0.5
+            //15    0.5 ~ 0.65
+            //10    0.65 ~ 0.75
+            //8     0.75 ~ 0.83
+            //6     0.83 ~ 0.89
+            //5     0.89 ~ 0.94
+            //4     0.94 ~ 0.98
+            //2     0.98 ~ 1.0
+            //0
+
+            int[] selection = new int[4];           // 골라진 4개
+            int count = 0;                          // 골라진 갯수
+            float arrow = -1f;                      // 룰렛의 화살표
+            bool[] flag = { false, false, false, false, false, false, false, false, false };
+            while (true)
+            {
+                arrow = (float)rand.NextDouble(); // 룰렛의 화살표
+                if (0f <= arrow && arrow < 0.3f)            // 1등
+                {
+                    if(flag[0] == false)
+                    {
+                        selection[count] = 1;
+                        flag[0] = true;
+                        count++;
+                    }
+                }
+                else if (0.3f <= arrow && arrow < 0.5f)     // 2등
+                {
+                    if (flag[1] == false)
+                    {
+                        selection[count] = 2;
+                        flag[1] = true;
+                        count++;
+                    }
+                }
+                else if (0.5f <= arrow && arrow < 0.65f)    // 3등
+                {
+                    if (flag[2] == false)
+                    {
+                        selection[count] = 3;
+                        flag[2] = true;
+                        count++;
+                    }
+                }
+                else if (0.65f <= arrow && arrow < 0.75f)   // 4등
+                {
+                    if (flag[3] == false)
+                    {
+                        selection[count] = 4;
+                        flag[3] = true;
+                        count++;
+                    }
+                }
+                else if (0.75f <= arrow && arrow < 0.83f)   // 5등
+                {
+                    if (flag[4] == false)
+                    {
+                        selection[count] = 5;
+                        flag[4] = true;
+                        count++;
+                    }
+                }
+                else if (0.83f <= arrow && arrow < 0.89f)   // 6등
+                {
+                    if (flag[5] == false)
+                    {
+                        selection[count] = 6;
+                        flag[5] = true;
+                        count++;
+                    }
+                }
+                else if (0.89f <= arrow && arrow < 0.94f)   // 7등
+                {
+                    if (flag[6] == false)
+                    {
+                        selection[count] = 7;
+                        flag[6] = true;
+                        count++;
+                    }
+                }
+                else if (0.94f <= arrow && arrow < 0.98f)   // 8등
+                {
+                    if (flag[7] == false)
+                    {
+                        selection[count] = 8;
+                        flag[7] = true;
+                        count++;
+                    }
+                }
+                else if (0.98f <= arrow && arrow < 1.0f)     // 9등
+                {
+                    if (flag[8] == false)
+                    {
+                        selection[count] = 9;
+                        flag[8] = true;
+                        count++;
+                    }
+                }
+                else                                        // 10등 혹은 오류값
+                {
+
+                }
+                if (count >= 4)
+                    break;
+            }
+
+            return selection;
         }
 
         static public float[] normalization(float[] x)

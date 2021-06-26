@@ -2403,7 +2403,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 51.03345
+  orthographic size: 51.686474
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -11418,7 +11418,7 @@ MonoBehaviour:
   checkPoint7: {fileID: 1452272447}
   checkPoint8: {fileID: 1192036546}
   checkPoint9: {fileID: 1714959165}
-  score:
+  playerScore:
   - 0
   - 0
   - 0

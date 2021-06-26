@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
     // 순위 측정용 변수
     public int checkCount = 0;
     
-    System.Random rand = new System.Random();   // 난수 생성
+    System.Random rand = new System.Random();   // 난수 생성용
 
 
     // Start is called before the first frame update
