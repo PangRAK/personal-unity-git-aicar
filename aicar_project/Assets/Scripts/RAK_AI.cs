@@ -30,8 +30,8 @@ namespace RAK_AI
 
         static public int[] rankingSelection()
         {
-            //40    0.0 ~ 0.3
-            //30    0.3 ~ 0.5
+            //30    0.0 ~ 0.3
+            //20    0.3 ~ 0.5
             //15    0.5 ~ 0.65
             //10    0.65 ~ 0.75
             //8     0.75 ~ 0.83
@@ -154,15 +154,33 @@ namespace RAK_AI
         static public float mutation(float w)
         {
             float randFloat = (float)rand.NextDouble();
-            if (randFloat < 0.005f)
+            //if (randFloat < 0.01f)
+            //{
+            //    if (randFloat < 0.005f)
+            //    {
+            //        w += (1 - w) / 2;
+            //    }
+            //    else
+            //    {
+            //        w += (-1 - w) / 2;
+            //    }
+            //}
+
+            if (randFloat < 0.01f)
             {
-                if (randFloat < 0.0025f)
+                if (randFloat < 0.005f)
                 {
-                    w += (1 - w) / 2;
+                    randFloat = (float)rand.NextDouble() / 3;
+                    w += randFloat;
+                    if (w >= 1f)
+                        w = 0.9999f;
                 }
                 else
                 {
-                    w -= (-1 - w) / 2;
+                    randFloat = (float)rand.NextDouble() / 3;
+                    w -= randFloat;
+                    if (w < -1.0f)
+                        w = -1.0f;
                 }
             }
             return w;
