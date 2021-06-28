@@ -10064,7 +10064,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   move_method: 0
-  speed: 0.05
+  speed: 0.1
   speed_vec: {x: 0, y: 0}
   originPos: {x: 0, y: 0, z: 0}
   sprite: {fileID: 0}
@@ -11429,6 +11429,17 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  playerRank:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
 --- !u!212 &2039689377
 SpriteRenderer:
   m_ObjectHideFlags: 0

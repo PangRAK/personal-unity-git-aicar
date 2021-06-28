@@ -242,6 +242,20 @@ public class Main : MonoBehaviour
                     {
                         child_w1[i, x, y] = selct_w1[1, x, y];
                     }
+
+                    //변이 연산
+                    randFloat = (float)rand.NextDouble();
+                    if (randFloat < 0.01f)
+                    {
+                        if (randFloat < 0.005f)
+                        {
+                            child_w1[i, x, y] += (1 - child_w1[i, x, y]) / 2;
+                        }
+                        else
+                        {
+                            child_w1[i, x, y] -= (-1 - child_w1[i, x, y]) / 2;
+                        }
+                    }
                 }
             }
         }
@@ -259,6 +273,20 @@ public class Main : MonoBehaviour
                     else
                     {
                         child_w2[i, x, y] = selct_w2[1, x, y];
+                    }
+
+                    //변이 연산
+                    randFloat = (float)rand.NextDouble();
+                    if (randFloat < 0.01f)
+                    {
+                        if (randFloat < 0.005f)
+                        {
+                            child_w2[i, x, y] += (1 - child_w2[i, x, y]) / 2;
+                        }
+                        else
+                        {
+                            child_w2[i, x, y] -= (-1 - child_w2[i, x, y]) / 2;
+                        }
                     }
                 }
             }
@@ -280,6 +308,20 @@ public class Main : MonoBehaviour
                     {
                         child_w1[i, x, y] = selct_w1[3, x, y];
                     }
+
+                    //변이 연산
+                    randFloat = (float)rand.NextDouble();
+                    if (randFloat < 0.01f)
+                    {
+                        if(randFloat < 0.005f)
+                        {
+                            child_w1[i, x, y] += (1 - child_w1[i, x, y]) / 2;
+                        }
+                        else
+                        {
+                            child_w1[i, x, y] -= (-1 - child_w1[i, x, y]) / 2;
+                        }
+                    }
                 }
             }
         }
@@ -297,6 +339,20 @@ public class Main : MonoBehaviour
                     else
                     {
                         child_w2[i, x, y] = selct_w2[3, x, y];
+                    }
+
+                    //변이 연산
+                    randFloat = (float)rand.NextDouble();
+                    if (randFloat < 0.01f)
+                    {
+                        if (randFloat < 0.005f)
+                        {
+                            child_w2[i, x, y] += (1 - child_w2[i, x, y]) / 2;
+                        }
+                        else
+                        {
+                            child_w2[i, x, y] -= (-1 - child_w2[i, x, y]) / 2;
+                        }
                     }
                 }
             }
