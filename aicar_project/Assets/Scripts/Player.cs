@@ -27,9 +27,9 @@ public class Player : MonoBehaviour
 
     // 인공지능 변수 세팅
     public float[,] w1 = new float[4,5];    // 입력층 -> 은닉층 가중치
-    public float[,] w2 = new float[3,4];    // 은닉층 -> 출력층 가중치
+    public float[,] w2 = new float[2,4];    // 은닉층 -> 출력층 가중치
     public float[] b1 = new float[4];       // 은닉층의 편향
-    public float[] b2 = new float[3];       // 출력층의 편향
+    public float[] b2 = new float[2];       // 출력층의 편향
 
     // 순위 측정용 변수
     public int checkCount = 0;
@@ -44,9 +44,9 @@ public class Player : MonoBehaviour
         sprite = gameObject.GetComponent<SpriteRenderer>();
 
         // 첫번째 층 가중치, 편향 세팅
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < w1.GetLength(0); i++)
         {
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < w1.GetLength(1); j++)
             {
                 w1[i, j] = ((float)rand.NextDouble() * 2) - 1.0f;   // -1.0 ~ 1.0 사이의 값을 가중치로 사용
                 //UnityEngine.Debug.Log("w1[" + i + "," + j + "] = " + w1[i,j]);
@@ -54,9 +54,9 @@ public class Player : MonoBehaviour
             b1[i] = 0f;
         }
         // 두번째 층 가중치, 편향 세팅
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < w2.GetLength(0); i++)
         {
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < w2.GetLength(1); j++)
             {   
                 w2[i, j] = ((float)rand.NextDouble() * 2) - 1.0f;   // -1.0 ~ 1.0 사이의 값을 가중치로 사용
                 //UnityEngine.Debug.Log("w2[" + i + "," + j + "] = " + w1[i, j]);

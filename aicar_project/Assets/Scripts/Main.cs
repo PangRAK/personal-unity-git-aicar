@@ -28,20 +28,13 @@ public class Main : MonoBehaviour
     public GameObject checkPoint7;
     public GameObject checkPoint8;
     public GameObject checkPoint9;
-    //private Player playerScript1;
-    //private Player playerScript2;
-    //private Player playerScript3;
-    //private Player playerScript4;
-    //private Player playerScript5;
-    //private Player playerScript6;
-    //private Player playerScript7;
-    //private Player playerScript8;
-    //private Player playerScript9;
-    //private Player playerScript10;
-    private Player[] playerScript = new Player[10];
-    public float[] playerScore = new float[10];
+    private Player[] playerScript = new Player[10]; // player 내부의 변수를 사용하기 위해 선언
+    public float[] playerScore = new float[10];     // 각 player의 점수들을 저장할 변수
     public float[] playerRank = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-    System.Random rand = new System.Random();   // 난수 생성용
+    System.Random rand = new System.Random();       // 난수 생성용
+    private float[,,] child_w1 = new float[10, 4, 5];
+    private float[,,] child_w2 = new float[10, 2, 4];
+
 
     // Start is called before the first frame update
     void Start()
@@ -85,33 +78,26 @@ public class Main : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CheckRanking();
+        if (checkAlive()) { }   // 살아있는 플레이어가 있을 시
+        else                    // 모든 플레이어가 죽었을 시, 유전알고리즘 연산을 하고 세팅후 재시작
+        {
+            UnityEngine.Debug.Log("[ Start Fitness Check ]");
+            CheckRanking();     // 플레이어들의 순위(적합도)를 체크함
+            UnityEngine.Debug.Log("[ End Fitness Check ]");
+
+            UnityEngine.Debug.Log("[ Start Genetic Process ]");
+            geneticProcess();   // 체크된 순위(적합도)를 이용하여 선택,교차,변이를 수행
+            UnityEngine.Debug.Log("[ End Genetic Process ]");
+
+            UnityEngine.Debug.Log("[ Start Reset Player ]");
+            resetPlayer();      // geneticProcess에서 산출된 결과를 이용하여 player들을 초기화하여 재시작
+            UnityEngine.Debug.Log("[ End Reset Player ]");
+            
+        }
     }
 
     void CheckRanking()
     {
-        //UnityEngine.Debug.Log("v1 = " + Vector2.Distance(player1.transform.position, checkPoint1.transform.position));
-        //UnityEngine.Debug.Log("v2 = " + Vector2.Distance(player2.transform.position, checkPoint1.transform.position));
-        //UnityEngine.Debug.Log("v3 = " + Vector2.Distance(player3.transform.position, checkPoint1.transform.position));
-        //UnityEngine.Debug.Log("v4 = " + Vector2.Distance(player4.transform.position, checkPoint1.transform.position));
-        //UnityEngine.Debug.Log("v5 = " + Vector2.Distance(player5.transform.position, checkPoint1.transform.position));
-        //UnityEngine.Debug.Log("v6 = " + Vector2.Distance(player6.transform.position, checkPoint1.transform.position));
-        //UnityEngine.Debug.Log("v7 = " + Vector2.Distance(player7.transform.position, checkPoint1.transform.position));
-        //UnityEngine.Debug.Log("v8 = " + Vector2.Distance(player8.transform.position, checkPoint1.transform.position));
-        //UnityEngine.Debug.Log("v9 = " + Vector2.Distance(player9.transform.position, checkPoint1.transform.position));
-        //UnityEngine.Debug.Log("v10 = " + Vector2.Distance(player10.transform.position, checkPoint1.transform.position));
-
-        //UnityEngine.Debug.Log("" + playerScript1.checkCount);
-        //UnityEngine.Debug.Log("" + playerScript2.checkCount);
-        //UnityEngine.Debug.Log("" + playerScript3.checkCount);
-        //UnityEngine.Debug.Log("" + playerScript4.checkCount);
-        //UnityEngine.Debug.Log("" + playerScript5.checkCount);
-        //UnityEngine.Debug.Log("" + playerScript6.checkCount);
-        //UnityEngine.Debug.Log("" + playerScript7.checkCount);
-        //UnityEngine.Debug.Log("" + playerScript8.checkCount);
-        //UnityEngine.Debug.Log("" + playerScript9.checkCount);
-        //UnityEngine.Debug.Log("" + playerScript10.checkCount);
-
         playerScore[0] = (playerScript[0].checkCount * 100f) - CalcDist(player1, playerScript[0].checkCount);
         playerScore[1] = (playerScript[1].checkCount * 100f) - CalcDist(player2, playerScript[1].checkCount);
         playerScore[2] = (playerScript[2].checkCount * 100f) - CalcDist(player3, playerScript[2].checkCount);
@@ -202,17 +188,17 @@ public class Main : MonoBehaviour
 
         // 교차 알고리즘==============================================================
         float[,,] selct_w1 = new float[4, 4, 5];    // 입력층 -> 은닉층 가중치
-        float[,,] selct_w2 = new float[4, 3, 4];    // 은닉층 -> 출력층 가중치
+        float[,,] selct_w2 = new float[4, 2, 4];    // 은닉층 -> 출력층 가중치
 
-        for (int i = 0; i < selection.Length; i++)  // 교차할 4명의의 유전자 저장
+        for (int i = 0; i < selection.GetLength(0); i++)    // 교차할 4명의의 w1유전자 저장
         {
-            for(int j = 0; j < 10; j++)
+            for (int j = 0; j < playerRank.GetLength(0); j++)
             {
-                if(selection[i] == playerRank[j])
+                if (selection[i] == playerRank[j])
                 {
-                    for (int x = 0; x < 4; x++)
+                    for (int x = 0; x < selct_w1.GetLength(1); x++)
                     {
-                        for (int y = 0; y < 5; y++)
+                        for (int y = 0; y < selct_w1.GetLength(2); y++)
                         {
                             selct_w1[i, x, y] = playerScript[j].w1[x, y];
                         }
@@ -221,17 +207,31 @@ public class Main : MonoBehaviour
             }
         }
 
-        // 교차 연산 시작 균등 교차를 사용
-        float[,,] child_w1 = new float[10, 4, 5];
-        float[,,] child_w2 = new float[10, 3, 4];
+        for (int i = 0; i < selection.GetLength(0); i++)    // 교차할 4명의의 w2유전자 저장
+        {
+            for (int j = 0; j < playerRank.GetLength(0); j++)
+            {
+                if (selection[i] == playerRank[j])
+                {
+                    for (int x = 0; x < selct_w2.GetLength(1); x++)
+                    {
+                        for (int y = 0; y < selct_w2.GetLength(2); y++)
+                        {
+                            selct_w2[i, x, y] = playerScript[j].w2[x, y];
+                        }
+                    }
+                }
+            }
+        }
 
+        // 교차 연산 시작 균등 교차를 사용
         // 1번~5번 자식 1번,2번 부모를 이용하며 만듬
         float randFloat = 0f;
         for (int i = 0; i < 5; i++) // w1 가중치
         {
-            for (int x = 0; x < 4; x++)
+            for (int x = 0; x < child_w1.GetLength(1); x++)
             {
-                for (int y = 0; y < 5; y++)
+                for (int y = 0; y < child_w1.GetLength(2); y++)
                 {
                     randFloat = (float)rand.NextDouble();
                     if (randFloat < 0.5f)
@@ -243,27 +243,29 @@ public class Main : MonoBehaviour
                         child_w1[i, x, y] = selct_w1[1, x, y];
                     }
 
-                    //변이 연산
-                    randFloat = (float)rand.NextDouble();
-                    if (randFloat < 0.01f)
-                    {
-                        if (randFloat < 0.005f)
-                        {
-                            child_w1[i, x, y] += (1 - child_w1[i, x, y]) / 2;
-                        }
-                        else
-                        {
-                            child_w1[i, x, y] -= (-1 - child_w1[i, x, y]) / 2;
-                        }
-                    }
+                    // 변이 알고리즘===========================================
+                    child_w1[i, x, y] = Rak_Ai.mutation(child_w1[i, x, y]);
+                    //randFloat = (float)rand.NextDouble();
+                    //if (randFloat < 0.01f)
+                    //{
+                    //    if (randFloat < 0.005f)
+                    //    {
+                    //        child_w1[i, x, y] += (1 - child_w1[i, x, y]) / 2;
+                    //    }
+                    //    else
+                    //    {
+                    //        child_w1[i, x, y] -= (-1 - child_w1[i, x, y]) / 2;
+                    //    }
+                    //}
+                    // ========================================================
                 }
             }
         }
         for (int i = 0; i < 5; i++) // w2 가중치
         {
-            for (int x = 0; x < 3; x++)
+            for (int x = 0; x < child_w2.GetLength(1); x++)
             {
-                for (int y = 0; y < 4; y++)
+                for (int y = 0; y < child_w2.GetLength(2); y++)
                 {
                     randFloat = (float)rand.NextDouble();
                     if (randFloat < 0.5f)
@@ -275,19 +277,21 @@ public class Main : MonoBehaviour
                         child_w2[i, x, y] = selct_w2[1, x, y];
                     }
 
-                    //변이 연산
-                    randFloat = (float)rand.NextDouble();
-                    if (randFloat < 0.01f)
-                    {
-                        if (randFloat < 0.005f)
-                        {
-                            child_w2[i, x, y] += (1 - child_w2[i, x, y]) / 2;
-                        }
-                        else
-                        {
-                            child_w2[i, x, y] -= (-1 - child_w2[i, x, y]) / 2;
-                        }
-                    }
+                    // 변이 알고리즘===========================================
+                    child_w2[i, x, y] = Rak_Ai.mutation(child_w2[i, x, y]);
+                    //randFloat = (float)rand.NextDouble();
+                    //if (randFloat < 0.01f)
+                    //{
+                    //    if (randFloat < 0.005f)
+                    //    {
+                    //        child_w2[i, x, y] += (1 - child_w2[i, x, y]) / 2;
+                    //    }
+                    //    else
+                    //    {
+                    //        child_w2[i, x, y] -= (-1 - child_w2[i, x, y]) / 2;
+                    //    }
+                    //}
+                    // ========================================================
                 }
             }
         }
@@ -295,9 +299,9 @@ public class Main : MonoBehaviour
         // 6번~10번 자식 3번,4번 부모를 이용하며 만듬
         for (int i = 5; i < 10; i++) // w1 가중치
         {
-            for (int x = 0; x < 4; x++)
+            for (int x = 0; x < child_w1.GetLength(1); x++)
             {
-                for (int y = 0; y < 5; y++)
+                for (int y = 0; y < child_w1.GetLength(2); y++)
                 {
                     randFloat = (float)rand.NextDouble();
                     if (randFloat < 0.5f)
@@ -309,27 +313,29 @@ public class Main : MonoBehaviour
                         child_w1[i, x, y] = selct_w1[3, x, y];
                     }
 
-                    //변이 연산
-                    randFloat = (float)rand.NextDouble();
-                    if (randFloat < 0.01f)
-                    {
-                        if(randFloat < 0.005f)
-                        {
-                            child_w1[i, x, y] += (1 - child_w1[i, x, y]) / 2;
-                        }
-                        else
-                        {
-                            child_w1[i, x, y] -= (-1 - child_w1[i, x, y]) / 2;
-                        }
-                    }
+                    // 변이 알고리즘===========================================
+                    child_w1[i, x, y] = Rak_Ai.mutation(child_w1[i, x, y]);
+                    //randFloat = (float)rand.NextDouble();
+                    //if (randFloat < 0.01f)
+                    //{
+                    //    if(randFloat < 0.005f)
+                    //    {
+                    //        child_w1[i, x, y] += (1 - child_w1[i, x, y]) / 2;
+                    //    }
+                    //    else
+                    //    {
+                    //        child_w1[i, x, y] -= (-1 - child_w1[i, x, y]) / 2;
+                    //    }
+                    //}
+                    // ========================================================
                 }
             }
         }
         for (int i = 5; i < 10; i++) // w2 가중치
         {
-            for (int x = 0; x < 3; x++)
+            for (int x = 0; x < child_w2.GetLength(1); x++)
             {
-                for (int y = 0; y < 4; y++)
+                for (int y = 0; y < child_w2.GetLength(2); y++)
                 {
                     randFloat = (float)rand.NextDouble();
                     if (randFloat < 0.5f)
@@ -341,22 +347,65 @@ public class Main : MonoBehaviour
                         child_w2[i, x, y] = selct_w2[3, x, y];
                     }
 
-                    //변이 연산
-                    randFloat = (float)rand.NextDouble();
-                    if (randFloat < 0.01f)
-                    {
-                        if (randFloat < 0.005f)
-                        {
-                            child_w2[i, x, y] += (1 - child_w2[i, x, y]) / 2;
-                        }
-                        else
-                        {
-                            child_w2[i, x, y] -= (-1 - child_w2[i, x, y]) / 2;
-                        }
-                    }
+                    // 변이 알고리즘===========================================
+                    child_w2[i, x, y] = Rak_Ai.mutation(child_w2[i, x, y]);
+                    //randFloat = (float)rand.NextDouble();
+                    //if (randFloat < 0.01f)
+                    //{
+                    //    if (randFloat < 0.005f)
+                    //    {
+                    //        child_w2[i, x, y] += (1 - child_w2[i, x, y]) / 2;
+                    //    }
+                    //    else
+                    //    {
+                    //        child_w2[i, x, y] -= (-1 - child_w2[i, x, y]) / 2;
+                    //    }
+                    //}
+                    // ========================================================
                 }
             }
         }
+
     }
 
+    bool checkAlive()
+    {
+        for (int i = 0; i < playerScript.Length; i++)
+        {
+            if (playerScript[i].move_method != -1)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void resetPlayer()
+    {
+        for (int i = 0; i < playerScript.Length; i++)
+        {
+            // 플레이어 가중치 세팅
+            for (int x = 0; x < child_w1.GetLength(1); x++)
+            {
+                for (int y = 0; y < child_w1.GetLength(2); y++)
+                {
+                    playerScript[i].w1[x, y] = child_w1[i, x, y];
+                }
+            }
+            for (int x = 0; x < child_w2.GetLength(1); x++)
+            {
+                for (int y = 0; y < child_w2.GetLength(2); y++)
+                {
+                    playerScript[i].w2[x, y] = child_w2[i, x, y];
+                }
+            }
+
+            // 플레이어 위치 시작점으로 이동
+            //playerScript[i].transform.position = Vector2.MoveTowards(playerScript[i].transform.position, transform.position);
+            playerScript[i].transform.position = transform.position;    // 위치 이동
+            playerScript[i].transform.rotation = transform.rotation;    // 정면 바라보게 회전
+            playerScript[i].sprite.color = Color.yellow;                // 플레이어 색 복구
+            playerScript[i].move_method = 0;                            // move_method 복구
+        }
+    }
 }

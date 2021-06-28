@@ -30,8 +30,8 @@ namespace RAK_AI
 
         static public int[] rankingSelection()
         {
-            //30    0.0 ~ 0.3
-            //20    0.3 ~ 0.5
+            //40    0.0 ~ 0.3
+            //30    0.3 ~ 0.5
             //15    0.5 ~ 0.65
             //10    0.65 ~ 0.75
             //8     0.75 ~ 0.83
@@ -142,13 +142,30 @@ namespace RAK_AI
 
         static public float[] normalization(float[] x)
         {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < x.Length; i++)
             {
                 if (x[i] != 0)
                     x[i] = 10f - x[i];
                 x[i] /= 10f;
             }
             return x;
+        }
+
+        static public float mutation(float w)
+        {
+            float randFloat = (float)rand.NextDouble();
+            if (randFloat < 0.005f)
+            {
+                if (randFloat < 0.0025f)
+                {
+                    w += (1 - w) / 2;
+                }
+                else
+                {
+                    w -= (-1 - w) / 2;
+                }
+            }
+            return w;
         }
 
         static public float[] predict(float[] x, float[,] w1, float[,] w2, float[] b1, float[] b2)
@@ -165,7 +182,7 @@ namespace RAK_AI
             //UnityEngine.Debug.Log("x5 = " + x[4]);
 
             // ÀÔ·ÂÃþ -> Àº´ÐÃþ °è»ê
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < w1.GetLength(0); i++)
             {
                 s1[i] = (w1[i,0] * x[0]) + (w1[i,1] * x[1]) + (w1[i,2] * x[2]) + (w1[i,3] * x[3]) + (w1[i,4] * x[4]) - b1[i];
                 r1[i] = sigmoid(s1[i]);
@@ -181,7 +198,7 @@ namespace RAK_AI
             //UnityEngine.Debug.Log("r4 = " + r1[3]);
 
             // Àº´ÐÃþ -> Ãâ·ÂÃþ °è»ê
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < w2.GetLength(0); i++)
             {
                 s2[i] = (w2[i,0] * r1[0]) + (w2[i,1] * r1[1]) + (w2[i,2] * r1[2]) + (w2[i,3] * r1[3]) - b2[i];
             }
