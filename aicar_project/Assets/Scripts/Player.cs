@@ -148,12 +148,12 @@ public class Player : MonoBehaviour
 
     void Left(float degree)
     {
-        transform.Rotate(0, 0, Time.deltaTime * degree * 200, Space.Self);
+        transform.Rotate(0, 0, Time.deltaTime * degree * 250, Space.Self);
     }
 
     void Right(float degree)
     {
-        transform.Rotate(0, 0, -Time.deltaTime * degree * 200, Space.Self);
+        transform.Rotate(0, 0, -Time.deltaTime * degree * 250, Space.Self);
     }
 
     private void OnTriggerEnter2D(Collider2D collider)

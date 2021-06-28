@@ -21,6 +21,7 @@ public class Main : MonoBehaviour
     public GameObject player9;
     public GameObject player10;
     private GameObject[] player = new GameObject[28];
+    private GameObject cameraObject;
     public GameObject checkPoint1;
     public GameObject checkPoint2;
     public GameObject checkPoint3;
@@ -31,6 +32,7 @@ public class Main : MonoBehaviour
     public GameObject checkPoint8;
     public GameObject checkPoint9;
     private Player[] playerScript = new Player[28]; // player 내부의 변수를 사용하기 위해 선언
+    private Player cameraScript;
     private float[] playerScore = new float[28];    // 각 player의 점수들을 저장할 변수
     private int[] playerRank = new int[28];
     System.Random rand = new System.Random();       // 난수 생성용
@@ -53,6 +55,9 @@ public class Main : MonoBehaviour
         {
             playerScript[i] = (Player)player[i].GetComponent(typeof(Player));
         }
+
+        cameraObject = GameObject.Find("Main Camera");
+        cameraScript = (Player)cameraObject.GetComponent(typeof(Player));
     }
 
     // Update is called once per frame
@@ -77,13 +82,15 @@ public class Main : MonoBehaviour
             playerScore[i] = (playerScript[i].checkCount * 1000f) - CalcDist(player[i], playerScript[i].checkCount);
         }
 
-        //for (int i = 0; i < 10; i++)
+        //for (int i = 0; i < playerScore.Length; i++)
         //    UnityEngine.Debug.Log("score_" + (i + 1) + " = " + playerScore[i]);
 
 
         // 플레이어 순위 구하기
         for (int i = 0; i < playerRank.Length; i++)
+        {
             playerRank[i] = 1;
+        }
         for (int i = 0; i < playerScore.Length; i++)
         {
             for (int j = 0; j < playerScore.Length; j++)
@@ -209,7 +216,7 @@ public class Main : MonoBehaviour
                     {
                         for (int y = 0; y < child_w1.GetLength(2); y++)
                         {
-                            child_w1[i, x, y] = playerScript[j].w1[x, y];
+                            child_w1[i, x, y] = Rak_Ai.mutation(playerScript[j].w1[x, y]);
                         }
                     }
                 }
@@ -225,7 +232,7 @@ public class Main : MonoBehaviour
                     {
                         for (int y = 0; y < child_w2.GetLength(2); y++)
                         {
-                            child_w2[i, x, y] = playerScript[j].w2[x, y];
+                            child_w2[i, x, y] = Rak_Ai.mutation(playerScript[j].w2[x, y]);
                         }
                     }
                 }
@@ -523,6 +530,7 @@ public class Main : MonoBehaviour
             playerScript[i].transform.rotation = transform.rotation;    // 정면 바라보게 회전
             playerScript[i].sprite.color = Color.yellow;                // 플레이어 색 복구
             playerScript[i].move_method = 0;                            // move_method 복구
+            playerScript[i].checkCount = 0;                             // checkCount 복구
         }
     }
 
@@ -544,6 +552,7 @@ public class Main : MonoBehaviour
                 swap = playerScript[i].transform.position;
                 swap.z = -2;
                 playerScript[i].transform.position = swap;
+                cameraObject.transform.position = new Vector3(swap.x, swap.y, -100);
             }
             else if (playerRank[i] == 2)
             {

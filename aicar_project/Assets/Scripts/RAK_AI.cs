@@ -170,14 +170,14 @@ namespace RAK_AI
             {
                 if (randFloat < 0.005f)
                 {
-                    randFloat = (float)rand.NextDouble() / 3;
+                    randFloat = (float)rand.NextDouble() / 2;
                     w += randFloat;
                     if (w >= 1f)
                         w = 0.9999f;
                 }
                 else
                 {
-                    randFloat = (float)rand.NextDouble() / 3;
+                    randFloat = (float)rand.NextDouble() / 2;
                     w -= randFloat;
                     if (w < -1.0f)
                         w = -1.0f;
