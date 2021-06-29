@@ -154,6 +154,7 @@ namespace RAK_AI
         static public float mutation(float w)
         {
             float randFloat = (float)rand.NextDouble();
+
             //if (randFloat < 0.01f)
             //{
             //    if (randFloat < 0.005f)
